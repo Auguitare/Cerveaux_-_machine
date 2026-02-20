@@ -4,23 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cerveau et Machine</title>
+    <title>Veille technologique - BCI</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&display=swap"
         rel="stylesheet">
     <style>
         :root {
             --bg: #030812;
-            --bg2: #050e1f;
+            --bg2: #060f22;
             --electric: #00f5ff;
             --neon: #7b2fff;
             --amber: #ff9500;
             --danger: #ff3c5f;
             --success: #00e87a;
             --text: #c8d8f0;
-            --muted: #5a7090;
-            --card: rgba(10, 25, 55, 0.8);
-            --border: rgba(0, 245, 255, 0.15);
+            --muted: #4a6080;
+            --card: rgba(10, 25, 55, 0.75);
+            --card2: rgba(6, 15, 34, 0.9);
+            --border: rgba(0, 245, 255, 0.12);
+            --border2: rgba(0, 245, 255, 0.2);
         }
 
         * {
@@ -33,11 +35,11 @@
             font-family: 'Exo 2', sans-serif;
             background: var(--bg);
             color: var(--text);
+            min-height: 100vh;
             overflow-x: hidden;
-            line-height: 1.6;
         }
 
-        /* Neural network SVG background */
+        /* Neural BG */
         #neural-bg {
             position: fixed;
             top: 0;
@@ -46,654 +48,708 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.18;
+            opacity: 0.15;
         }
 
         .page {
             position: relative;
             z-index: 1;
-            max-width: 1100px;
+            max-width: 1060px;
             margin: 0 auto;
-            padding: 0 24px 80px;
+            padding: 44px 24px 70px;
         }
 
-        /* ── HERO ── */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 60px 0 40px;
-            position: relative;
+        /* ── HEADER ── */
+        .header {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: end;
+            gap: 20px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--border2);
+            margin-bottom: 10px;
+            animation: fadeUp 0.7s ease both;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(123, 47, 255, 0.25) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
-
-        .hero-label {
+        .header-meta {
             font-family: 'Orbitron', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.35em;
+            font-size: 0.58rem;
+            letter-spacing: 0.3em;
             color: var(--electric);
             text-transform: uppercase;
-            margin-bottom: 20px;
-            animation: fadeUp 0.8s ease both;
+            margin-bottom: 12px;
+            opacity: 0.7;
         }
 
-        .hero-title {
+        .header-title {
             font-family: 'Orbitron', monospace;
-            font-size: clamp(2rem, 5vw, 3.8rem);
+            font-size: clamp(1.8rem, 4vw, 2.9rem);
             font-weight: 900;
-            line-height: 1.1;
-            background: linear-gradient(135deg, #ffffff 0%, var(--electric) 50%, var(--neon) 100%);
+            line-height: 1.05;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #fff 0%, var(--electric) 55%, var(--neon) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 16px;
-            animation: fadeUp 0.8s 0.1s ease both;
+            margin-bottom: 12px;
         }
 
-        .hero-sub {
-            font-size: 1.15rem;
+        .header-tagline {
+            font-size: 0.92rem;
             font-weight: 300;
             color: var(--muted);
-            max-width: 600px;
-            margin-bottom: 40px;
+            max-width: 540px;
+            line-height: 1.6;
             font-style: italic;
-            animation: fadeUp 0.8s 0.2s ease both;
         }
 
-        .hero-brain {
-            width: 180px;
-            height: 180px;
-            margin-bottom: 40px;
-            animation: float 4s ease-in-out infinite, fadeUp 0.8s 0.3s ease both;
-            position: relative;
+        .verdict-box {
+            background: linear-gradient(135deg, rgba(123, 47, 255, 0.2), rgba(0, 245, 255, 0.08));
+            border: 1px solid rgba(123, 47, 255, 0.5);
+            border-radius: 16px;
+            padding: 20px 26px;
+            text-align: center;
+            min-width: 158px;
+            box-shadow: 0 0 40px rgba(123, 47, 255, 0.15);
+            flex-shrink: 0;
         }
 
-        .sources-bar {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-            animation: fadeUp 0.8s 0.4s ease both;
+        .verdict-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.55rem;
+            letter-spacing: 0.25em;
+            color: var(--neon);
+            margin-bottom: 8px;
+            opacity: 0.8;
         }
 
-        .source-chip {
+        .verdict-stars {
+            font-size: 1.3rem;
+            color: var(--amber);
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px var(--amber);
+        }
+
+        .verdict-sub {
             font-family: 'Orbitron', monospace;
             font-size: 0.6rem;
-            letter-spacing: 0.1em;
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
             color: var(--electric);
-            background: rgba(0, 245, 255, 0.05);
+            letter-spacing: 0.05em;
         }
 
-        /* ── SCROLL INDICATOR ── */
-        .scroll-hint {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+        .sub-header {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 0 32px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.55rem;
             color: var(--muted);
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            animation: bounce 2s infinite;
+            letter-spacing: 0.12em;
         }
 
-        .scroll-hint svg {
-            width: 20px;
-            opacity: 0.5;
-        }
-
-        /* ── SECTION HEADERS ── */
-        .section {
-            margin: 80px 0 40px;
-            animation: fadeUp 0.6s ease both;
-        }
-
-        .section-num {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.65rem;
-            letter-spacing: 0.3em;
-            color: var(--electric);
-            opacity: 0.6;
-            margin-bottom: 6px;
-        }
-
-        .section-title {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(1.3rem, 3vw, 1.9rem);
-            font-weight: 700;
-            color: #fff;
-            position: relative;
-            padding-bottom: 16px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(90deg, var(--electric), transparent);
-        }
-
-        /* ── CARDS ── */
-        .grid-2 {
+        /* ── GRID ── */
+        .blocks {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 14px;
         }
 
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-
-        @media(max-width: 700px) {
-
-            .grid-2,
-            .grid-3,
-            .grid-4 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px 24px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+        .block {
             position: relative;
             overflow: hidden;
         }
 
-        .card::before {
+        .block-full {
+            grid-column: 1 / -1;
+        }
+
+        @media(max-width:660px) {
+            .blocks {
+                grid-template-columns: 1fr;
+            }
+
+            .block-full {
+                grid-column: 1;
+            }
+        }
+
+        /* Glassmorphism card */
+        .glass {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            backdrop-filter: blur(14px);
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .glass:hover {
+            border-color: rgba(0, 245, 255, 0.28);
+            box-shadow: 0 16px 60px rgba(0, 245, 255, 0.06);
+        }
+
+        .glass::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 2px;
+            height: 1px;
             background: linear-gradient(90deg, transparent, var(--electric), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
+            opacity: 0.4;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 245, 255, 0.3);
-            box-shadow: 0 20px 60px rgba(0, 245, 255, 0.08);
+        /* Block header */
+        .bh {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 20px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 245, 255, 0.025);
         }
 
-        .card:hover::before {
-            opacity: 1;
-        }
-
-        .card-icon {
-            font-size: 2.2rem;
-            margin-bottom: 14px;
-            display: block;
-        }
-
-        .card-title {
+        .bh-num {
             font-family: 'Orbitron', monospace;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            color: var(--electric);
+            background: rgba(0, 245, 255, 0.08);
+            border: 1px solid rgba(0, 245, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .bh-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.1em;
             color: #fff;
-            margin-bottom: 10px;
+            font-weight: 700;
         }
 
-        .card p {
-            font-size: 0.88rem;
-            color: var(--text);
-            opacity: 0.8;
-            line-height: 1.65;
+        .bb {
+            padding: 22px 20px;
         }
 
-        /* ── HIGHLIGHT CARD ── */
-        .card-highlight {
-            border-color: rgba(123, 47, 255, 0.4);
-            background: rgba(123, 47, 255, 0.07);
-        }
-
-        .card-highlight::before {
-            background: linear-gradient(90deg, transparent, var(--neon), transparent);
-            opacity: 0.6;
-        }
-
-        .card-danger {
-            border-color: rgba(255, 60, 95, 0.3);
-            background: rgba(255, 60, 95, 0.05);
-        }
-
-        .card-success {
-            border-color: rgba(0, 232, 122, 0.3);
-            background: rgba(0, 232, 122, 0.05);
-        }
-
-        /* ── STAT BLOCKS ── */
-        .stat-grid {
+        /* ── BLOC 1 ── */
+        .essentials {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
         }
 
-        .stat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px 20px;
-            text-align: center;
-            transition: transform 0.3s;
+        .ess-cell {
+            background: var(--card2);
+            padding: 18px 20px;
         }
 
-        .stat-card:hover {
-            transform: scale(1.03);
+        .ess-cell.wide {
+            grid-column: 1 / -1;
+            background: rgba(123, 47, 255, 0.12);
         }
 
-        .stat-value {
+        .ess-kicker {
             font-family: 'Orbitron', monospace;
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--electric), var(--neon));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
+            font-size: 0.52rem;
+            letter-spacing: 0.2em;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .ess-cell.wide .ess-kicker {
+            color: var(--neon);
+            opacity: 0.8;
+        }
+
+        .why-chip {
+            display: inline-block;
+            background: rgba(255, 149, 0, 0.15);
+            border: 1px solid rgba(255, 149, 0, 0.4);
+            color: var(--amber);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.52rem;
+            letter-spacing: 0.12em;
+            padding: 3px 10px;
+            border-radius: 20px;
             margin-bottom: 8px;
         }
 
-        .stat-label {
+        .ess-value {
+            font-size: 0.88rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--text);
+        }
+
+        .ess-cell.wide .ess-value {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: #e0ecff;
+            font-style: italic;
+        }
+
+        .ess-value strong {
+            color: var(--electric);
+            font-weight: 600;
+        }
+
+        /* ── TRL ── */
+        .trl-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 14px;
+        }
+
+        .trl-step {
+            flex: 1;
+            height: 36px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            transition: transform 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .trl-off {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--muted);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .trl-l {
+            background: rgba(255, 60, 95, 0.08);
+            color: rgba(255, 60, 95, 0.6);
+            border-color: rgba(255, 60, 95, 0.15);
+        }
+
+        .trl-m {
+            background: rgba(255, 149, 0, 0.1);
+            color: rgba(255, 149, 0, 0.7);
+            border-color: rgba(255, 149, 0, 0.2);
+        }
+
+        .trl-h {
+            background: rgba(0, 232, 122, 0.08);
+            color: rgba(0, 232, 122, 0.7);
+            border-color: rgba(0, 232, 122, 0.15);
+        }
+
+        .trl-on {
+            background: linear-gradient(135deg, var(--electric), var(--neon));
+            color: #fff;
+            border: none;
+            box-shadow: 0 0 18px rgba(0, 245, 255, 0.35);
+            transform: scaleY(1.18);
+            font-size: 0.75rem;
+        }
+
+        .trl-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.55rem;
+            color: var(--muted);
+            margin-bottom: 18px;
+            letter-spacing: 0.05em;
+        }
+
+        .trl-label-row .active-lbl {
+            color: var(--electric);
+        }
+
+        .trl-caption {
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid rgba(0, 245, 255, 0.15);
+            border-left: 3px solid var(--electric);
+            border-radius: 0 10px 10px 0;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+        }
+
+        .trl-caption-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.62rem;
+            color: var(--electric);
+            margin-bottom: 4px;
+            letter-spacing: 0.05em;
+        }
+
+        .trl-caption p {
             font-size: 0.78rem;
+            color: var(--text);
+            opacity: 0.75;
+            line-height: 1.5;
+        }
+
+        .horizon-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .hz {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            transition: border-color 0.3s;
+        }
+
+        .hz:hover {
+            border-color: rgba(0, 245, 255, 0.25);
+        }
+
+        .hz-when {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.6rem;
+            color: var(--electric);
+            margin-bottom: 4px;
+            letter-spacing: 0.05em;
+        }
+
+        .hz-what {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .hz-sub {
+            font-size: 0.72rem;
             color: var(--muted);
             line-height: 1.4;
         }
 
-        /* ── TIMELINE ── */
-        .timeline {
-            position: relative;
-            padding-left: 40px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 12px;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(180deg, var(--electric), var(--neon), transparent);
-        }
-
-        .tl-item {
-            position: relative;
-            margin-bottom: 32px;
-            animation: fadeUp 0.5s ease both;
-        }
-
-        .tl-dot {
-            position: absolute;
-            left: -34px;
-            top: 4px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--electric);
-            box-shadow: 0 0 12px var(--electric);
-        }
-
-        .tl-year {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.7rem;
-            color: var(--electric);
-            letter-spacing: 0.15em;
-            margin-bottom: 4px;
-        }
-
-        .tl-title {
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 6px;
-            font-size: 0.95rem;
-        }
-
-        .tl-desc {
-            font-size: 0.82rem;
-            color: var(--muted);
-            line-height: 1.55;
-        }
-
-        /* ── DIAGRAM: HOW IT WORKS ── */
-        .flow {
+        /* ── VALEUR ── */
+        .sectors {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
             flex-wrap: wrap;
-            margin: 32px 0;
-        }
-
-        .flow-step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            width: 140px;
-        }
-
-        .flow-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 2px solid var(--electric);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            background: rgba(0, 245, 255, 0.05);
-            box-shadow: 0 0 20px rgba(0, 245, 255, 0.15);
-            margin-bottom: 12px;
-            transition: box-shadow 0.3s;
-        }
-
-        .flow-step:hover .flow-circle {
-            box-shadow: 0 0 40px rgba(0, 245, 255, 0.4);
-        }
-
-        .flow-label {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.65rem;
-            letter-spacing: 0.05em;
-            color: var(--electric);
-            text-align: center;
-        }
-
-        .flow-arrow {
-            color: var(--muted);
-            font-size: 1.5rem;
-            padding: 0 8px;
-            margin-bottom: 24px;
-        }
-
-        /* ── PRO/CON TABLE ── */
-        .procon {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media(max-width: 600px) {
-            .procon {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .procon-col {
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .procon-head {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            padding: 14px 20px;
-            font-weight: 700;
-        }
-
-        .pro-head {
-            background: rgba(0, 232, 122, 0.15);
-            color: var(--success);
-        }
-
-        .con-head {
-            background: rgba(255, 60, 95, 0.12);
-            color: var(--danger);
-        }
-
-        .procon-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 12px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 0.84rem;
-            color: var(--text);
-            background: var(--card);
-        }
-
-        .procon-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            margin-top: 7px;
-            flex-shrink: 0;
-        }
-
-        .pro-dot {
-            background: var(--success);
-            box-shadow: 0 0 6px var(--success);
-        }
-
-        .con-dot {
-            background: var(--danger);
-            box-shadow: 0 0 6px var(--danger);
-        }
-
-        /* ── ETHICS WHEEL ── */
-        .ethics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        @media(max-width: 600px) {
-            .ethics-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .ethics-item {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px 16px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ethics-item::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-        }
-
-        .e-purple::after {
-            background: var(--neon);
-        }
-
-        .e-amber::after {
-            background: var(--amber);
-        }
-
-        .e-red::after {
-            background: var(--danger);
-        }
-
-        .e-teal::after {
-            background: var(--electric);
-        }
-
-        .e-green::after {
-            background: var(--success);
-        }
-
-        .e-orange::after {
-            background: #ff6b35;
-        }
-
-        .ethics-icon {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        .ethics-name {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.65rem;
-            letter-spacing: 0.1em;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .ethics-desc {
-            font-size: 0.75rem;
-            color: var(--muted);
-            line-height: 1.45;
-        }
-
-        /* ── FUTURE CARD ── */
-        .future-band {
-            background: linear-gradient(135deg, rgba(123, 47, 255, 0.12), rgba(0, 245, 255, 0.06));
-            border: 1px solid rgba(123, 47, 255, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .future-band::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 50% 50%, rgba(123, 47, 255, 0.08) 0%, transparent 60%);
-            animation: pulse 5s ease-in-out infinite;
-        }
-
-        .future-band h3 {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.4rem;
-            color: #fff;
+            gap: 7px;
             margin-bottom: 16px;
         }
 
-        .future-band p {
-            font-size: 0.95rem;
+        .sec-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border2);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.78rem;
             color: var(--text);
-            max-width: 700px;
-            margin: 0 auto;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .sec-tag:hover {
+            border-color: rgba(0, 245, 255, 0.3);
+            background: rgba(0, 245, 255, 0.04);
+        }
+
+        .sec-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .chain-lbl {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.52rem;
+            letter-spacing: 0.18em;
+            color: var(--muted);
+            margin: 14px 0 8px;
+            text-transform: uppercase;
+        }
+
+        .chain {
+            display: flex;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .ch-step {
+            flex: 1;
+            padding: 10px 6px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--muted);
+            line-height: 1.35;
+            border-right: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.015);
+            transition: background 0.2s;
+        }
+
+        .ch-step:last-child {
+            border-right: none;
+        }
+
+        .ch-step.hl {
+            background: rgba(0, 245, 255, 0.07);
+            color: var(--electric);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .ch-step.hl::after {
+            content: '★';
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 0.5rem;
+            color: var(--amber);
+        }
+
+        .ch-icon {
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .chain-note {
+            font-size: 0.62rem;
+            color: var(--muted);
+            text-align: center;
             font-style: italic;
         }
 
-        /* ── QUOTE ── */
-        .blockquote {
-            border-left: 3px solid var(--electric);
-            padding: 16px 24px;
-            margin: 24px 0;
-            background: rgba(0, 245, 255, 0.03);
-            border-radius: 0 12px 12px 0;
-            font-style: italic;
-            font-size: 0.9rem;
-            color: var(--text);
-            opacity: 0.85;
+        .uc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
         }
 
-        /* ── BADGE TAG ── */
-        .tag {
-            display: inline-block;
+        .uc {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--neon);
+            border-radius: 0 8px 8px 0;
+            padding: 10px 12px;
+            font-size: 0.78rem;
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+
+        .uc:hover {
+            border-left-color: var(--electric);
+        }
+
+        .uc-cat {
             font-family: 'Orbitron', monospace;
             font-size: 0.55rem;
             letter-spacing: 0.12em;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin: 3px;
-            border: 1px solid;
-        }
-
-        .tag-blue {
-            border-color: var(--electric);
-            color: var(--electric);
-            background: rgba(0, 245, 255, 0.06);
-        }
-
-        .tag-purple {
-            border-color: var(--neon);
             color: var(--neon);
-            background: rgba(123, 47, 255, 0.06);
+            margin-bottom: 3px;
         }
 
-        .tag-amber {
-            border-color: var(--amber);
-            color: var(--amber);
-            background: rgba(255, 149, 0, 0.06);
+        /* ── RISQUES ── */
+        .risk-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .tag-red {
-            border-color: var(--danger);
+        .risk-row {
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .risk-row:hover {
+            border-color: rgba(0, 245, 255, 0.2);
+        }
+
+        .risk-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.65rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.03em;
+        }
+
+        .risk-icon {
+            font-size: 1rem;
+        }
+
+        .risk-track {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .risk-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1.4s ease;
+            width: 0;
+        }
+
+        .risk-fill.animated {
+            width: var(--w);
+        }
+
+        .risk-desc {
+            font-size: 0.7rem;
+            color: var(--muted);
+            line-height: 1.35;
+        }
+
+        .rbadge {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.55rem;
+            letter-spacing: 0.08em;
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        .rb-h {
+            background: rgba(255, 60, 95, 0.15);
             color: var(--danger);
-            background: rgba(255, 60, 95, 0.06);
+            border: 1px solid rgba(255, 60, 95, 0.3);
         }
 
-        /* ── DIVIDER ── */
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--electric), transparent);
-            margin: 60px 0;
-            opacity: 0.3;
+        .rb-m {
+            background: rgba(255, 149, 0, 0.12);
+            color: var(--amber);
+            border: 1px solid rgba(255, 149, 0, 0.3);
+        }
+
+        .rb-l {
+            background: rgba(0, 232, 122, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 232, 122, 0.25);
+        }
+
+        /* ── SIGNAUX ── */
+        .sig-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .sig-col-head {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.15em;
+            color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            text-transform: uppercase;
+        }
+
+        .sig-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sp-amber {
+            background: var(--amber);
+            box-shadow: 0 0 8px var(--amber);
+        }
+
+        .sp-blue {
+            background: var(--electric);
+            box-shadow: 0 0 8px var(--electric);
+        }
+
+        .sig-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            margin-bottom: 8px;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .sig-item:hover {
+            border-color: rgba(0, 245, 255, 0.2);
+            background: rgba(0, 245, 255, 0.03);
+        }
+
+        .sig-arrow {
+            font-size: 0.9rem;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .sig-text {
+            font-size: 0.78rem;
+            line-height: 1.45;
+            color: var(--text);
+        }
+
+        .sig-text strong {
+            color: #fff;
+            font-weight: 600;
         }
 
         /* ── FOOTER ── */
-        footer {
-            text-align: center;
-            padding: 40px;
-            border-top: 1px solid var(--border);
-            margin-top: 80px;
-            font-size: 0.75rem;
+        .footer {
+            margin-top: 16px;
+            padding: 18px 22px;
+            background: rgba(6, 15, 34, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-note {
+            font-size: 0.7rem;
             color: var(--muted);
+            line-height: 1.6;
             font-style: italic;
         }
 
-        /* ── ANIMATIONS ── */
+        .footer-sources {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.55rem;
+            color: rgba(0, 245, 255, 0.35);
+            text-align: right;
+            line-height: 1.9;
+            letter-spacing: 0.05em;
+        }
+
+        /* Animations */
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(18px);
             }
 
             to {
@@ -702,61 +758,10 @@
             }
         }
 
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-12px);
-            }
-        }
-
-        @keyframes bounce {
-
-            0%,
-            100% {
-                transform: translateX(-50%) translateY(0);
-            }
-
-            50% {
-                transform: translateX(-50%) translateY(8px);
-            }
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 0.5;
-            }
-
-            50% {
-                opacity: 1;
-            }
-        }
-
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .scan-line {
-            animation: fadeUp 0.3s ease both;
-        }
-
-        /* Intersection observer animations */
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
+            transform: translateY(22px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
         }
 
         .reveal.visible {
@@ -764,50 +769,34 @@
             transform: translateY(0);
         }
 
-        /* Progress bars for applications */
-        .prog-bar-wrap {
-            margin: 10px 0;
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            color: var(--electric);
+            border: 1px solid rgba(0, 245, 255, 0.4);
+            background: rgba(0, 245, 255, 0.06);
+            padding: 12px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s, box-shadow 0.3s;
+            margin-top: 16px;
         }
 
-        .prog-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.78rem;
-            color: var(--text);
-            margin-bottom: 5px;
-        }
-
-        .prog-track {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .prog-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 1.5s ease;
-            width: 0;
-        }
-
-        .prog-fill.animated {
-            width: var(--w);
+        .btn-link:hover {
+            background: rgba(0, 245, 255, 0.12);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Neural network SVG background -->
+    <!-- Neural SVG background -->
     <svg id="neural-bg" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice">
-        <defs>
-            <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#00f5ff" stop-opacity="1" />
-                <stop offset="100%" stop-color="#00f5ff" stop-opacity="0" />
-            </radialGradient>
-        </defs>
-        <!-- Nodes -->
         <g stroke="#00f5ff" stroke-width="0.5" fill="none">
             <line x1="100" y1="200" x2="300" y2="150" />
             <line x1="300" y1="150" x2="500" y2="300" />
@@ -821,15 +810,13 @@
             <line x1="150" y1="650" x2="350" y2="700" />
             <line x1="350" y1="700" x2="550" y2="650" />
             <line x1="550" y1="650" x2="750" y2="750" />
-            <line x1="750" y1="750" x2="950" y2="680" />
             <line x1="100" y1="200" x2="200" y2="400" />
             <line x1="300" y1="150" x2="450" y2="500" />
             <line x1="700" y1="200" x2="600" y2="400" />
             <line x1="900" y1="350" x2="800" y2="550" />
             <line x1="1100" y1="280" x2="1000" y2="450" />
         </g>
-        <!-- Dots -->
-        <g fill="#00f5ff" opacity="0.7">
+        <g fill="#00f5ff" opacity="0.6">
             <circle cx="100" cy="200" r="3" />
             <circle cx="300" cy="150" r="3" />
             <circle cx="500" cy="300" r="3" />
@@ -845,560 +832,386 @@
             <circle cx="350" cy="700" r="3" />
             <circle cx="550" cy="650" r="3" />
             <circle cx="750" cy="750" r="3" />
-            <circle cx="950" cy="680" r="3" />
         </g>
     </svg>
 
     <div class="page">
 
-        <!-- ══════════════════════ HERO ══════════════════════ -->
-        <section class="hero">
-            <div class="hero-label"></div>
-
-            <!-- Brain SVG illustration -->
-            <svg class="hero-brain" viewBox="0 0 200 200" fill="none">
-                <defs>
-                    <radialGradient id="brainGlow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="#7b2fff" stop-opacity="0.5" />
-                        <stop offset="100%" stop-color="#00f5ff" stop-opacity="0" />
-                    </radialGradient>
-                </defs>
-                <circle cx="100" cy="100" r="90" fill="url(#brainGlow)" opacity="0.4" />
-                <circle cx="100" cy="100" r="100" stroke="#00f5ff" stroke-width="1" stroke-dasharray="4 4"
-                    opacity="0.5" />
-                <path
-                    d="M 154.768 111.468 C 161.704 107.598 166.462 100.272 166.462 91.74 C 166.462 82.434 160.84 74.454 152.812 70.968 C 152.812 70.89 152.836 70.818 152.836 70.74 C 152.836 59.142 143.44 49.74 131.836 49.74 C 130.18 49.74 128.59 50.022 127.054 50.406 C 123.37 52.092 120.748 54.438 119.344 57.468 C 116.152 64.326 119.26 73.212 120.748 76.71 L 112.456 80.22 C 111.292 77.454 109.912 73.428 109.288 68.922 C 106.594 70.614 103.648 71.856 100.57 72.468 C 99.142 72.756 97.72 72.894 96.334 72.894 C 91.852 72.894 87.682 71.43 84.292 68.616 L 90.034 61.692 C 93.01 64.152 96.454 64.11 98.818 63.642 C 103.66 62.682 108.466 59.064 110.812 54.642 L 110.824 54.648 C 110.956 54.33 111.034 54 111.184 53.682 C 113.14 49.47 116.38 46.164 120.664 43.662 C 117.082 40.764 112.558 39 107.59 39 C 101.284 39 95.692 41.838 91.846 46.242 C 88.612 44.694 85.042 43.752 81.22 43.752 C 70.582 43.752 61.594 50.52 58.126 59.952 C 57.352 59.88 56.614 59.718 55.822 59.718 C 41.758 59.718 30.364 71.112 30.364 85.17 C 30.364 89.262 31.36 93.102 33.076 96.516 C 34.342 91.674 37.036 87.408 41.128 84.162 C 50.746 76.524 65.944 75.714 79.858 82.062 L 76.108 90.246 C 65.266 85.278 53.722 85.644 46.726 91.206 C 42.076 94.89 40.318 100.296 41.644 106.824 L 41.578 106.836 C 44.38 114.804 51.838 120.57 60.754 120.57 C 63.214 120.57 65.548 120.066 67.732 119.262 C 70.45 122.376 74.392 124.38 78.844 124.38 C 82.12 124.38 85.09 123.24 87.532 121.434 C 89.254 120.072 90.976 118.356 92.842 116.448 C 101.98 107.088 114.496 94.296 148.372 105.84 L 145.468 114.36 C 116.95 104.634 107.968 113.838 99.28 122.736 C 96.562 125.514 93.904 128.142 90.814 130.11 C 98.122 143.226 118 156.276 123.58 169.692 C 134.164 153.564 118.378 135.69 118.378 135.69 C 119.854 136.134 121.378 136.452 123.004 136.452 C 126.892 136.452 130.414 134.994 133.18 132.666 C 135.424 133.884 137.956 134.634 140.692 134.634 C 149.47 134.634 156.598 127.518 156.598 118.728 C 156.598 116.094 155.896 113.646 154.768 111.468 Z M 175.462 91.752 C 175.462 100.608 171.688 108.966 165.286 114.87 C 165.496 116.148 165.604 117.432 165.604 118.722 C 165.604 132.456 154.432 143.628 140.698 143.628 C 138.49 143.628 136.312 143.328 134.188 142.734 C 133.906 142.878 133.618 143.022 133.318 143.148 C 137.02 152.346 138.184 163.842 131.104 174.624 L 121.786 188.826 L 115.27 173.148 C 112.954 167.592 106.384 161.034 100.012 154.692 C 93.148 147.858 86.128 140.862 82.216 133.14 C 81.106 133.29 79.972 133.374 78.838 133.374 C 74.014 133.374 69.34 131.886 65.41 129.168 C 63.856 129.438 62.296 129.564 60.754 129.564 C 48.766 129.564 38.236 122.43 33.682 111.522 C 25.918 105 21.364 95.352 21.364 85.17 C 21.364 67.272 35.086 52.518 52.57 50.874 C 58.606 41.022 69.442 34.752 81.214 34.752 C 84.124 34.752 87.004 35.142 89.83 35.916 C 94.954 32.106 101.17 30 107.59 30 C 116.59 30 124.906 34.008 130.528 40.782 C 130.96 40.764 131.404 40.752 131.83 40.752 C 146.548 40.752 158.83 51.414 161.356 65.424 C 170.074 71.232 175.462 81.054 175.462 91.752 Z"
-                    stroke="#00f5ff" stroke-width="0.2" fill="rgba(0,245,255,0.1)" />
-                <!-- Circuit lines on brain -->
-                <line x1="140" y1="80" x2="100" y2="50" stroke="#7b2fff" stroke-width="1.5" opacity="0.8" />
-                <line x1="100" y1="50" x2="80" y2="65" stroke="#7b2fff" stroke-width="1.5" opacity="0.8" />
-                <line x1="140" y1="80" x2="100" y2="100" stroke="#7b2fff" stroke-width="1.5" opacity="0.8" />
-                <line x1="140" y1="80" x2="130" y2="110" stroke="#7b2fff" stroke-width="1.5" opacity="0.8" />
-                <circle cx="140" cy="80" r="5" fill="#00f5ff" opacity="0.9" />
-                <circle cx="100" cy="50" r="3" fill="#7b2fff" opacity="0.8" />
-                <circle cx="80" cy="65" r="3" fill="#7b2fff" opacity="0.8" />
-                <circle cx="100" cy="100" r="3" fill="#7b2fff" opacity="0.8" />
-                <circle cx="130" cy="110" r="3" fill="#7b2fff" opacity="0.8" />
-                <!-- Pulse rings -->
-                <circle cx="140" cy="80" r="20" stroke="#00f5ff" stroke-width="1" fill="none">
-                    <animate attributeName="r" values="5;35" dur="3s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="1.5;0" dur="3s" repeatCount="indefinite" />
-                </circle>
-            </svg>
-
-            <h1 class="hero-title">Cerveaux &amp; Machines<br>La Frontière Effacée</h1>
-            <p class="hero-sub">Des implants neuronaux au transhumanisme — comprendre la révolution en cours, ses
-                promesses et ses défis éthiques</p>
-
-            <div class="sources-bar">
-                <span class="source-chip">📄 Implants Cérébraux</span>
-                <span class="source-chip">⚡ Neuralink (Shaima et al., 2024)</span>
-                <span class="source-chip">🔬 Recherche BCI</span>
-                <span class="source-chip">⚖️ Transhumanisme & Droits (Guigma & Godo, 2024)</span>
-            </div>
-
-            <div class="scroll-hint">
-                EXPLORER
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14M5 12l7 7 7-7" />
-                </svg>
-            </div>
-        </section>
-
-        <!-- ══════════════════════ 1. QU'EST-CE ? ══════════════════════ -->
-        <div class="divider"></div>
-
-        <div class="section reveal">
-            <div class="section-num">01</div>
-            <h2 class="section-title">Qu'est-ce qu'une <strong style="color:var(--electric)"> B.C.I </strong> ?</h2>
-        </div>
-
-        <div class="grid-2 reveal">
-            <div class="card card-highlight">
-                <span class="card-icon">🧠</span>
-                <div class="card-title">Définition BCI</div>
-                <p>Une <strong style="color:var(--electric)">Interface Cerveau-Machine (BCI)</strong> est un système qui
-                    établit une communication directe entre le cerveau humain et un appareil numérique — sans passer par
-                    les voies nerveuses naturelles (muscles, nerfs).</p>
-                <br>
-                <p>Le signal neuronal est capté, amplifié, traduit en données numériques, puis interprété par des
-                    algorithmes pour exécuter une action.</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">⚡</span>
-                <div class="card-title">Le signal neuronal</div>
-                <p>Le cerveau communique par <strong style="color:var(--amber)">signaux électriques</strong> entre 86
-                    milliards de neurones. Les BCI captent ces impulsions grâce à des électrodes microscopiques placées
-                    à la surface ou à l'intérieur du tissu cérébral.</p>
-                <br>
-                <div>
-                    <span class="tag tag-blue">Acquisition</span>
-                    <span class="tag tag-amber">Amplification</span>
-                    <span class="tag tag-purple">Décodage "IA"</span>
-                    <span class="tag tag-blue">Action</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Flow diagram -->
-        <div class="card reveal" style="margin-top:20px; padding:36px">
-            <div class="card-title" style="text-align:center;margin-bottom:28px;">⟳ &nbsp;Comment ça marche — Flux du
-                signal</div>
-            <div class="flow">
-                <div class="flow-step">
-                    <div class="flow-circle">🧠</div>
-                    <div class="flow-label">NEURONES<br>Activité cérébrale</div>
-                </div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step">
-                    <div class="flow-circle" style="border-color:var(--amber)">🔌</div>
-                    <div class="flow-label">ÉLECTRODES<br>Fils ultra-fins</div>
-                </div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step">
-                    <div class="flow-circle" style="border-color:var(--neon)">💡</div>
-                    <div class="flow-label">PUCE<br>Amplification</div>
-                </div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step">
-                    <div class="flow-circle" style="border-color:var(--danger)">🤖</div>
-                    <div class="flow-label">IA & ALGO<br>Décodage</div>
-                </div>
-                <div class="flow-arrow">→</div>
-                <div class="flow-step">
-                    <div class="flow-circle" style="border-color:var(--success)">🖥️</div>
-                    <div class="flow-label">APPAREIL<br>Action finale</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ══════════════════════ 2. NEURALINK ══════════════════════ -->
-        <div class="divider"></div>
-
-        <div class="section reveal">
-            <div class="section-num">02</div>
-            <h2 class="section-title">Neuralink — La puce d'Elon Musk</h2>
-        </div>
-
-        <div class="stat-grid reveal">
-            <!-- <div class="stat-card">
-                <div class="stat-value">2016</div>
-                <div class="stat-label">Fondation de Neuralink par Elon Musk</div>
-            </div> -->
-            <div class="stat-card">
-                <div class="stat-value">3072</div>
-                <div class="stat-label">Contacts électrodes par plaquette</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">20nm</div>
-                <div class="stat-label">Électrode individuelle (nanomètre)</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">96</div>
-                <div class="stat-label">Fils (threads) dans la v0.9</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">5–50µm</div>
-                <div class="stat-label">Largeur des fils — plus fins qu'un cheveu</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">20k</div>
-                <div class="stat-label">Échantillons/seconde par canal</div>
-            </div>
-        </div>
-
-        <div class="grid-3 reveal" style="margin-top:20px">
-            <div class="card">
-                <span class="card-icon">🧵</span>
-                <div class="card-title">Les "Threads"</div>
-                <p>Des fils en film mince encapsulés dans du polyimide, 48 à 96 par réseau, chacun portant <strong
-                        style="color:var(--electric)">32 électrodes séparées</strong>. Insérés par un robot chirurgical
-                    de précision pour minimiser les dommages au tissu neural.</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">📡</span>
-                <div class="card-title">Transmission</div>
-                <p>Communication <strong style="color:var(--amber)">sans fil</strong> entre la puce et les appareils
-                    externes. Les données neurales peuvent être enregistrées en temps réel simultanément avec des
-                    données de suivi de mouvements physiques.</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">🤖</span>
-                <div class="card-title">Modèle Cérébral IA</div>
-                <p>Les données neurales alimentent des <strong style="color:var(--neon)">algorithmes de machine
-                        learning</strong> pour construire une emulation du cerveau humain — ouvrant la voie à une
-                    symbiose homme-machine inédite.</p>
-            </div>
-        </div>
-
-        <div class="blockquote reveal">
-            "Neuralink represents a revolutionary combination of health science, neurology, and artificial intelligence
-            — a potentially beneficial brain implant consisting of tiny electrodes placed behind the ear." — Shaima et
-            al., Journal of Computer Science and Technology Studies, 2024
-        </div>
-
-        <!-- ══════════════════════ 3. APPLICATIONS ══════════════════════ -->
-        <div class="divider"></div>
-
-        <div class="section reveal">
-            <div class="section-num">03</div>
-            <h2 class="section-title">Applications &amp; Usages</h2>
-        </div>
-
-        <div class="grid-2 reveal">
+        <!-- HEADER -->
+        <div class="header">
             <div>
-                <div class="card card-success" style="margin-bottom:16px">
-                    <span class="card-icon">🏥</span>
-                    <div class="card-title">Applications Médicales</div>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Paralysie — contrôle moteur</span><span
-                                style="color:var(--success)">Avancé</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:85%; background:var(--success)"></div>
+                <div class="header-meta">Note de veille technologique · Interfaces Cerveau-Machine</div>
+                <h1 class="header-title">Brain-Computer<br>Interface (BCI)</h1>
+                <p class="header-tagline">Lire, stimuler et augmenter le cerveau humain via des électrodes implantées —
+                    du traitement neurologique à la symbiose homme-machine.</p>
+            </div>
+            <div class="verdict-box">
+                <div class="verdict-label">Attractivité BA</div>
+                <div class="verdict-stars">★★★★☆</div>
+                <div class="verdict-sub">Forte · 5–10 ans</div>
+            </div>
+        </div>
+
+        <div class="sub-header">
+            <span>Secteur : Neurotechnologies / HealthTech / DeepTech</span>
+            <span>Sources : publications académiques 2020-2024</span>
+            <span>Fév. 2025</span>
+        </div>
+
+        <!-- BLOCKS -->
+        <div class="blocks">
+
+            <!-- ══ BLOC 1 ══ -->
+            <div class="block block-full glass reveal">
+                <div class="bh">
+                    <span class="bh-num">01</span>
+                    <span class="bh-label">L'Essentiel</span>
+                </div>
+                <div class="essentials">
+                    <div class="ess-cell wide">
+                        <div class="ess-kicker">Pourquoi ça compte</div>
+                        <div class="why-chip">Enjeu fondamental</div>
+                        <div class="ess-value">Les BCI permettent pour la première fois une communication directe entre
+                            le cerveau humain et les machines — ouvrant un marché de plusieurs centaines de milliards à
+                            l'intersection de la medtech, de l'IA et de la neurologie.</div>
+                    </div>
+                    <div class="ess-cell">
+                        <div class="ess-kicker">Technologie clé</div>
+                        <div class="ess-value">Électrodes ultra-fines <strong>(5–50 µm)</strong> + puce de traitement +
+                            <strong>algorithmes IA</strong> de décodage neural
                         </div>
                     </div>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Parkinson — stimulation cérébrale</span><span
-                                style="color:var(--success)">Avancé</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:80%; background:var(--success)"></div>
-                        </div>
+                    <div class="ess-cell">
+                        <div class="ess-kicker">Acteur emblématique</div>
+                        <div class="ess-value"><strong>Neuralink</strong> (Musk, 2016) — 3 072 électrodes, premier
+                            implant humain fonctionnel en <strong>2024</strong></div>
                     </div>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Épilepsie — détection précoce</span><span
-                                style="color:var(--amber)">Prometteur</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:65%; background:var(--amber)"></div>
-                        </div>
-                    </div>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Dépression / anxiété</span><span style="color:var(--amber)">En
-                                recherche</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:45%; background:var(--amber)"></div>
-                        </div>
-                    </div>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Détection de cancer</span><span
-                                style="color:var(--muted)">Futur</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:25%; background:var(--neon)"></div>
+                    <div class="ess-cell">
+                        <div class="ess-kicker">Promesse centrale</div>
+                        <div class="ess-value"> <strong> Traiter</strong> la paralysie, Parkinson, épilepsie — puis
+                            <strong>augmenter</strong> les
+                            capacités cognitives des individus sains
                         </div>
                     </div>
                 </div>
             </div>
-            <div>
-                <div class="card card-highlight" style="margin-bottom:16px">
-                    <span class="card-icon">⚡</span>
-                    <div class="card-title">Augmentation Cognitive</div>
-                    <p style="margin-bottom:16px; font-size:0.85rem">Au-delà du médical, les BCIs ouvrent la voie à
-                        l'amélioration de capacités chez des individus sains :</p>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Mémoire augmentée</span><span
-                                style="color:var(--neon)">Conceptuel</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:30%; background:var(--neon)"></div>
+
+            <!-- ══ BLOC 2 ══ -->
+            <div class="block glass reveal">
+                <div class="bh">
+                    <span class="bh-num">02</span>
+                    <span class="bh-label">Où en est la technologie ?</span>
+                </div>
+                <div class="bb">
+                    <div
+                        style="font-family:'Orbitron',monospace;font-size:0.52rem;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">
+                        Niveau TRL</div>
+                    <div class="trl-row">
+                        <div class="trl-step trl-l">1</div>
+                        <div class="trl-step trl-l">2</div>
+                        <div class="trl-step trl-m">3</div>
+                        <div class="trl-step trl-m">4</div>
+                        <div class="trl-step trl-h">5</div>
+                        <div class="trl-step trl-h">6</div>
+                        <div class="trl-step trl-on">7</div>
+                        <div class="trl-step trl-off">8</div>
+                        <div class="trl-step trl-off">9</div>
+                    </div>
+                    <div class="trl-label-row">
+                        <span>Concept</span>
+                        <span>Prototype</span>
+                        <span class="active-lbl">▲ Validation<br>clinique</span>
+                        <span>Marché</span>
+                    </div>
+                    <div class="trl-caption">
+                        <div class="trl-caption-title">TRL 7 — Validation système en conditions réelles</div>
+                        <p>1er implant humain fonctionnel (Neuralink, janv. 2024) : contrôle de curseur par la pensée.
+                            Essais cliniques en cours. Pas encore de dispositif commercialisé.</p>
+                    </div>
+                    <div
+                        style="font-family:'Orbitron',monospace;font-size:0.52rem;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">
+                        Horizon de maturité</div>
+                    <div class="horizon-grid">
+                        <div class="hz">
+                            <div class="hz-when">2025–2027</div>
+                            <div class="hz-what">Médical validé</div>
+                            <div class="hz-sub">Premiers dispositifs CE/FDA — paralysie, Parkinson</div>
+                        </div>
+                        <div class="hz">
+                            <div class="hz-when">2028–2032</div>
+                            <div class="hz-what">Expansion thérap.</div>
+                            <div class="hz-sub">Dépression, épilepsie, réhabilitation post-AVC</div>
+                        </div>
+                        <div class="hz">
+                            <div class="hz-when">2030–2035</div>
+                            <div class="hz-what">Augmentation</div>
+                            <div class="hz-sub">Premiers cas non-thérapeutiques chez individu sain</div>
+                        </div>
+                        <div class="hz">
+                            <div class="hz-when">2035+</div>
+                            <div class="hz-what">Symbiose homme-IA</div>
+                            <div class="hz-sub">Connexion directe cerveau–cloud, mémoire augmentée</div>
                         </div>
                     </div>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Communication cerveau-à-cerveau</span><span
-                                style="color:var(--neon)">Conceptuel</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:20%; background:var(--neon)"></div>
+                </div>
+            </div>
+
+            <!-- ══ BLOC 3 ══ -->
+            <div class="block glass reveal">
+                <div class="bh">
+                    <span class="bh-num">03</span>
+                    <span class="bh-label">Où est la valeur ?</span>
+                </div>
+                <div class="bb">
+                    <div class="chain-lbl">Secteurs impactés</div>
+                    <div class="sectors">
+                        <div class="sec-tag"><span class="sec-dot" style="background:var(--success)"></span>MedTech /
+                            Neurologie</div>
+                        <div class="sec-tag"><span class="sec-dot" style="background:var(--electric)"></span>IA / Data
+                            neurale</div>
+                        <div class="sec-tag"><span class="sec-dot" style="background:var(--amber)"></span>Robotique /
+                            Prothèses</div>
+                        <div class="sec-tag"><span class="sec-dot" style="background:var(--neon)"></span>Défense /
+                            Performance</div>
+                        <div class="sec-tag"><span class="sec-dot" style="background:var(--danger)"></span>Justice /
+                            Forensic</div>
+                        <div class="sec-tag"><span class="sec-dot" style="background:#38bdf8"></span>Éducation cognitive
                         </div>
                     </div>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Connexion directe à l'IA</span><span
-                                style="color:var(--neon)">Conceptuel</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:15%; background:var(--neon)"></div>
+
+                    <div class="chain-lbl">Position dans la chaîne de valeur</div>
+                    <div class="chain">
+                        <div class="ch-step">
+                            <span class="ch-icon">🔬</span>Matériaux<br>biocompat.
+                        </div>
+                        <div class="ch-step hl">
+                            <span class="ch-icon">💡</span>Capteur &<br>puce BCI
+                        </div>
+                        <div class="ch-step hl">
+                            <span class="ch-icon">🧠</span>Algo IA<br>décodage
+                        </div>
+                        <div class="ch-step">
+                            <span class="ch-icon">📊</span>Plateforme<br>données
+                        </div>
+                        <div class="ch-step">
+                            <span class="ch-icon">🏥</span>Intégration<br>clinique
                         </div>
                     </div>
-                    <div class="prog-bar-wrap">
-                        <div class="prog-label"><span>Télépathie numérique</span><span
-                                style="color:var(--muted)">Spéculatif</span></div>
-                        <div class="prog-track">
-                            <div class="prog-fill" style="--w:8%; background:var(--muted)"></div>
+                    <div class="chain-note">★ Positions à haute valeur ajoutée identifiées</div>
+
+                    <div class="chain-lbl">Types de cas d'usage</div>
+                    <div class="uc-grid">
+                        <div class="uc">
+                            <div class="uc-cat">Curatif</div>
+                            Rétablir des fonctions perdues (motricité, communication chez paralysés)
+                        </div>
+                        <div class="uc">
+                            <div class="uc-cat">Compensatoire</div>
+                            Traiter pathologies chroniques (Parkinson, épilepsie, dépression)
+                        </div>
+                        <div class="uc">
+                            <div class="uc-cat">Augmentatif</div>
+                            Dépasser les capacités normales (mémoire, vitesse cognitive)
+                        </div>
+                        <div class="uc">
+                            <div class="uc-cat">Forensic</div>
+                            Analyse de patterns neuraux en investigation (très controversé)
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ══════════════════════ 4. TRANSHUMANISME ══════════════════════ -->
-        <div class="divider"></div>
-
-        <div class="section reveal">
-            <div class="section-num">04</div>
-            <h2 class="section-title">Le Transhumanisme — Vision &amp; Concepts</h2>
-        </div>
-
-        <div class="card reveal" style="margin-bottom:20px">
-            <span class="card-icon">🚀</span>
-            <div class="card-title">Qu'est-ce que le Transhumanisme ?</div>
-            <p>Mouvement intellectuel qui ambitionne d'utiliser la science et la technologie pour <strong
-                    style="color:var(--electric)">transcender les limites biologiques</strong> de l'espèce humaine :
-                maladies, vieillissement, mort. Il ne s'agit pas d'améliorer l'environnement de l'homme, mais l'homme
-                lui-même — physiquement et cognitivement.</p>
-            <br>
-            <p>Trois concepts clés fondent ce projet : la <strong style="color:var(--neon)">Convergence NBIC</strong>,
-                la <strong style="color:var(--amber)">Singularité</strong> et le <strong
-                    style="color:var(--danger)">Cyborg</strong>.</p>
-        </div>
-
-        <div class="grid-3 reveal">
-            <div class="card card-highlight">
-                <span class="card-icon">🔬</span>
-                <div class="card-title">Convergence NBIC</div>
-                <p>Intégration de 4 domaines : <strong style="color:var(--electric)">N</strong>anotechnologies, <strong
-                        style="color:var(--electric)">B</strong>iotechnologies, <strong
-                        style="color:var(--electric)">I</strong>nformatique, sciences <strong
-                        style="color:var(--electric)">C</strong>ognitives. Leur fusion vise à transformer profondément
-                    les capacités humaines.</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">💫</span>
-                <div class="card-title">La Singularité</div>
-                <p>Moment hypothétique où l'intelligence artificielle dépasserait l'intelligence humaine, rendant les
-                    changements technologiques si rapides qu'ils deviendraient imprévisibles pour l'humanité actuelle.
-                </p>
-            </div>
-            <div class="card">
-                <span class="card-icon">🤖</span>
-                <div class="card-title">Le Cyborg</div>
-                <p>Hybridation entre l'humain et la machine. L'être augmenté combine biologie et technologie — Neuralink
-                    en est une première concrétisation vers ce concept longtemps réservé à la science-fiction.</p>
-            </div>
-        </div>
-
-        <!-- Timeline -->
-        <div class="section reveal" style="margin-top:50px">
-            <div class="card-title" style="margin-bottom:24px; font-family:'Orbitron',monospace;">⏱ Jalons historiques
-            </div>
-            <div class="timeline">
-                <div class="tl-item">
-                    <div class="tl-dot"></div>
-                    <div class="tl-year">ANTIQUITÉ — Plotin (205–270)</div>
-                    <div class="tl-title">L'idée d'amélioration de soi</div>
-                    <div class="tl-desc">Métaphore du sculpteur : l'humain doit oeuvrer à retirer ses imperfections pour
-                        révéler sa beauté intrinsèque. Premier germe de la perfectibilité humaine.</div>
+            <!-- ══ BLOC 4 ══ -->
+            <div class="block glass reveal">
+                <div class="bh">
+                    <span class="bh-num">04</span>
+                    <span class="bh-label">Niveau de risque</span>
                 </div>
-                <div class="tl-item">
-                    <div class="tl-dot" style="background:var(--neon)"></div>
-                    <div class="tl-year">1795 — Condorcet</div>
-                    <div class="tl-title">L'immortalité comme projet</div>
-                    <div class="tl-desc">Prédit un temps où la mort ne serait plus que l'effet d'accidents
-                        extraordinaires — fondement philosophique de l'aspiration transhumaniste à vaincre la mort.
+                <div class="bb">
+                    <div class="risk-rows">
+
+                        <div class="risk-row">
+                            <div class="risk-name"><span class="risk-icon">⚙️</span>Techno.</div>
+                            <div>
+                                <div class="risk-track">
+                                    <div class="risk-fill"
+                                        style="--w:55%; background:linear-gradient(90deg,var(--amber),rgba(255,149,0,0.4))">
+                                    </div>
+                                </div>
+                                <div class="risk-desc">Biocompatibilité long terme, rejet tissulaire, panne logicielle —
+                                    partiellement validé in vivo</div>
+                            </div>
+                            <span class="rbadge rb-m">MODÉRÉ</span>
+                        </div>
+
+                        <div class="risk-row">
+                            <div class="risk-name"><span class="risk-icon">📈</span>Marché</div>
+                            <div>
+                                <div class="risk-track">
+                                    <div class="risk-fill"
+                                        style="--w:38%; background:linear-gradient(90deg,var(--success),rgba(0,232,122,0.4))">
+                                    </div>
+                                </div>
+                                <div class="risk-desc">Marché médical captif et large. Demande prouvée. Risque de
+                                    concentration oligopolistique (Neuralink, Synchron)</div>
+                            </div>
+                            <span class="rbadge rb-l">FAIBLE</span>
+                        </div>
+
+                        <div class="risk-row">
+                            <div class="risk-name"><span class="risk-icon">⚖️</span>Réglementaire</div>
+                            <div>
+                                <div class="risk-track">
+                                    <div class="risk-fill"
+                                        style="--w:78%; background:linear-gradient(90deg,var(--danger),rgba(255,60,95,0.4))">
+                                    </div>
+                                </div>
+                                <div class="risk-desc">Cadre juridique inexistant sur les "neurodroits". RGPD ne couvre
+                                    pas les données neurales. UE et ONU s'en saisissent</div>
+                            </div>
+                            <span class="rbadge rb-h">ÉLEVÉ</span>
+                        </div>
+
+                        <div class="risk-row">
+                            <div class="risk-name"><span class="risk-icon">🔐</span>Cyber</div>
+                            <div>
+                                <div class="risk-track">
+                                    <div class="risk-fill"
+                                        style="--w:70%; background:linear-gradient(90deg,var(--danger),rgba(255,60,95,0.4))">
+                                    </div>
+                                </div>
+                                <div class="risk-desc">Données neurales = données les plus sensibles au monde. Piratage
+                                    d'implant, revente, surveillance de masse</div>
+                            </div>
+                            <span class="rbadge rb-h">ÉLEVÉ</span>
+                        </div>
+
+                        <div class="risk-row">
+                            <div class="risk-name"><span class="risk-icon">⚔️</span>Social</div>
+                            <div>
+                                <div class="risk-track">
+                                    <div class="risk-fill"
+                                        style="--w:62%; background:linear-gradient(90deg,rgba(255,149,0,0.8),rgba(255,149,0,0.3))">
+                                    </div>
+                                </div>
+                                <div class="risk-desc">Fracture augmentés / non-augmentés. Accès réservé aux élites.
+                                    Eugénisme et dignité humaine remis en question</div>
+                            </div>
+                            <span class="rbadge rb-m">MOD.–ÉLEVÉ</span>
+                        </div>
+
                     </div>
                 </div>
-                <div class="tl-item">
-                    <div class="tl-dot" style="background:var(--amber)"></div>
-                    <div class="tl-year">2000 — Rapport US "NBIC"</div>
-                    <div class="tl-title">Institutionnalisation du mouvement</div>
-                    <div class="tl-desc">Premier grand rapport gouvernemental sur les technologies convergentes pour
-                        améliorer les performances humaines. Le transhumanisme entre dans l'arène politique.</div>
+            </div>
+
+            <!-- ══ BLOC 6 ══ -->
+            <div class="block glass reveal">
+                <div class="bh">
+                    <span class="bh-num">05</span>
+                    <span class="bh-label">Pourquoi rester attentif ?</span>
                 </div>
-                <div class="tl-item">
-                    <div class="tl-dot" style="background:var(--success)"></div>
-                    <div class="tl-year">2016 — Fondation de Neuralink</div>
-                    <div class="tl-title">La puce dans le crâne devient réalité</div>
-                    <div class="tl-desc">Elon Musk fonde Neuralink pour développer une interface cerveau-machine
-                        commerciale. La vision transhumaniste passe du concept à la startup valorisée à des milliards.
+                <div class="bb">
+                    <div class="sig-grid">
+                        <div>
+                            <div class="sig-col-head"><span class="sig-pulse sp-amber"></span>Signaux faibles</div>
+                            <div class="sig-item">
+                                <span class="sig-arrow">📡</span>
+                                <div class="sig-text"><strong>Législation "neurodroits"</strong> — Le Chili inscrit les
+                                    neurodroits dans sa Constitution (2021). L'UE s'en empare.</div>
+                            </div>
+                            <div class="sig-item">
+                                <span class="sig-arrow">🧬</span>
+                                <div class="sig-text"><strong>Convergence NBIC accélérée</strong> — Nano, bio, info et
+                                    cognitif s'intègrent plus vite que prévu (rapport US 2000, confirmé 2024).</div>
+                            </div>
+                            <div class="sig-item">
+                                <span class="sig-arrow">🏛️</span>
+                                <div class="sig-text"><strong>Intérêt militaire</strong> — DARPA investit massivement
+                                    dans les BCI pour performances des soldats.</div>
+                            </div>
+                            <div class="sig-item">
+                                <span class="sig-arrow">🌍</span>
+                                <div class="sig-text"><strong>Startups non-invasives</strong> — Synchron, Kernel, Emotiv
+                                    : concurrents sans chirurgie, adoption plus aisée.</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sig-col-head"><span class="sig-pulse sp-blue"></span>Déclencheurs </div>
+                            <div class="sig-item">
+                                <span class="sig-arrow">✅</span>
+                                <div class="sig-text"><strong>Autorisation FDA / CE</strong> d'un premier dispositif BCI
+                                    commercial — signal d'entrée sur le marché de masse.</div>
+                            </div>
+                            <div class="sig-item">
+                                <span class="sig-arrow">📋</span>
+                                <div class="sig-text"><strong>Directive UE "neurodroits"</strong> — définira le cadre
+                                    réglementaire structurant le marché européen pour 10 ans.</div>
+                            </div>
+                            <div class="sig-item">
+                                <span class="sig-arrow">💰</span>
+                                <div class="sig-text"><strong>IPO ou mega-round Neuralink</strong> — signal de maturité
+                                    et d'entrée des investisseurs institutionnels.</div>
+                            </div>
+                            <div class="sig-item">
+                                <span class="sig-arrow">🏆</span>
+                                <div class="sig-text"><strong>Résultats essais Phase II/III</strong> sur paralysie et
+                                    Parkinson — validera (ou invalidera) le passage au TRL 8.</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="tl-item">
-                    <div class="tl-dot" style="background:var(--electric); box-shadow: 0 0 20px var(--electric)"></div>
-                    <div class="tl-year">2024 — Premier implant humain</div>
-                    <div class="tl-title">Le Rubicon est franchi</div>
-                    <div class="tl-desc">Neuralink implante sa puce chez un premier patient humain paralysé. Il contrôle
-                        un curseur par la pensée. L'humanité augmentée n'est plus de la science-fiction.</div>
+            </div>
+            <div class="block block-full glass reveal">
+                <div class="bh">
+                    <span class="bh-num">06</span>
+                    <span class="bh-label">Informations complémentaire</span>
+                </div>
+                <div class="essentials">
+                    <div class="ess-cell wide">
+                        <div class="ess-kicker">Pour en savoir plus</div>
+                        <div class="ess-value">Si le sujet vous intéresse nous avons fait une page plus détaillée
+                            reprenant les différents aspect du sujet.
+                            <a class="btn-link" href="detail.html" target="_blank">
+                                Voir la note complète
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
 
-        <!-- ══════════════════════ 5. ÉTHIQUE ══════════════════════ -->
-        <div class="divider"></div>
-
-        <div class="section reveal">
-            <div class="section-num">05</div>
-            <h2 class="section-title">Enjeux Éthiques &amp; Droits de l'Homme</h2>
-        </div>
-
-        <div class="ethics-grid reveal">
-            <div class="ethics-item e-purple">
-                <div class="ethics-icon">⚖️</div>
-                <div class="ethics-name">INÉGALITÉS SOCIALES</div>
-                <div class="ethics-desc">Qui aura accès aux améliorations ? Un humain "augmenté" crée une fracture entre
-                    élites et personnes non modifiées.</div>
+        <!-- FOOTER -->
+        <div class="footer reveal">
+            <div class="footer-note">
+                Destinée à l'évaluation par un Business Angel. <br>
+                Synthèse de publications académiques.<br>
+                Ne constitue pas un conseil en investissement.
             </div>
-            <div class="ethics-item e-amber">
-                <div class="ethics-icon">🔐</div>
-                <div class="ethics-name">VIE PRIVÉE & DONNÉES</div>
-                <div class="ethics-desc">Les données neurales sont les plus intimes qui soient. Qui contrôle ces données
-                    ? Peuvent-elles être piratées ou vendues ?</div>
-            </div>
-            <div class="ethics-item e-red">
-                <div class="ethics-icon">🧬</div>
-                <div class="ethics-name">DIGNITÉ HUMAINE</div>
-                <div class="ethics-desc">Fukuyama (2002) : la nature humaine biologique est le fondement irremplaçable
-                    de nos valeurs éthiques et morales.</div>
-            </div>
-            <div class="ethics-item e-teal">
-                <div class="ethics-icon">🗽</div>
-                <div class="ethics-name">AUTONOMIE & LIBERTÉ</div>
-                <div class="ethics-desc">Droit de modifier son propre corps vs. risques de coercition ou manipulation
-                    des émotions et comportements.</div>
-            </div>
-            <div class="ethics-item e-green">
-                <div class="ethics-icon">⚕️</div>
-                <div class="ethics-name">SÉCURITÉ MÉDICALE</div>
-                <div class="ethics-desc">Effets à long terme de l'implantation ? Risques de rejet, de dommages
-                    neurologiques, de défaillances logicielles.</div>
-            </div>
-            <div class="ethics-item e-orange">
-                <div class="ethics-icon">🔍</div>
-                <div class="ethics-name">SURVEILLANCE</div>
-                <div class="ethics-desc">Potentiel d'utilisation dans la détection criminelle : lecture de mémoires,
-                    vérification de vérité, analyse de comportements.</div>
+            <div class="footer-sources">
+                Shaima et al. (2024) · JCSTS 6(1):200-203<br>
+                Guigma & Godo (2024) · Djiboul N°008 Vol.3<br>
+                + Recherches BCI & Implants (2024)
             </div>
         </div>
-
-        <!-- Pro/Con -->
-        <div class="procon reveal" style="margin-top:24px">
-            <div class="procon-col">
-                <div class="procon-head pro-head">✦ OPPORTUNITÉS</div>
-                <div class="procon-item"><span class="procon-dot pro-dot"></span>Traitement de maladies neurologiques
-                    incurables (paralysie, Parkinson, épilepsie)</div>
-                <div class="procon-item"><span class="procon-dot pro-dot"></span>Amélioration de l'accès à l'éducation
-                    et réduction des handicaps</div>
-                <div class="procon-item"><span class="procon-dot pro-dot"></span>Renforcement de l'autonomie
-                    individuelle par la technologie</div>
-                <div class="procon-item"><span class="procon-dot pro-dot"></span>Avancées scientifiques majeures en
-                    neurosciences</div>
-                <div class="procon-item"><span class="procon-dot pro-dot"></span>Réduction des inégalités biologiques
-                    naturelles (la "loterie naturelle")</div>
-                <div class="procon-item"><span class="procon-dot pro-dot"></span>Symbiose homme-machine pour des
-                    capacités inédites</div>
-            </div>
-            <div class="procon-col">
-                <div class="procon-head con-head">⚠ RISQUES</div>
-                <div class="procon-item"><span class="procon-dot con-dot"></span>Aggravation des inégalités sociales et
-                    économiques mondiales</div>
-                <div class="procon-item"><span class="procon-dot con-dot"></span>Atteinte à la dignité humaine et
-                    redéfinition de l'humanité</div>
-                <div class="procon-item"><span class="procon-dot con-dot"></span>Risques cybersécurité : piratage
-                    d'implants cérébraux</div>
-                <div class="procon-item"><span class="procon-dot con-dot"></span>Eugénisme et marchandisation du corps
-                    humain</div>
-                <div class="procon-item"><span class="procon-dot con-dot"></span>Perte d'authenticité dans les relations
-                    humaines</div>
-                <div class="procon-item"><span class="procon-dot con-dot"></span>Effets médicaux à long terme encore
-                    inconnus</div>
-            </div>
-        </div>
-
-        <!-- ══════════════════════ 6. VERS L'AVENIR ══════════════════════ -->
-        <div class="divider"></div>
-
-        <div class="section reveal">
-            <div class="section-num">06</div>
-            <h2 class="section-title">Vers une Gouvernance Éthique</h2>
-        </div>
-
-        <div class="grid-2 reveal" style="margin-bottom:24px">
-            <div class="card">
-                <span class="card-icon">🏛️</span>
-                <div class="card-title">Cadres Nécessaires</div>
-                <p>États, institutions internationales, scientifiques et société civile doivent collaborer pour élaborer
-                    des <strong style="color:var(--electric)">cadres juridiques et normatifs</strong> garantissant que
-                    le transhumanisme reste au service de l'humanité entière.</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">🌍</span>
-                <div class="card-title">Principe de Justice</div>
-                <p>Les mécanismes de régulation doivent prévenir les abus et promouvoir une <strong
-                        style="color:var(--amber)">distribution équitable</strong> des bénéfices technologiques —
-                    évitant que ces avancées ne profitent qu'à une élite privilégiée.</p>
-            </div>
-        </div>
-
-        <div class="future-band reveal">
-            <h3>L'Humanité à la Croisée des Chemins</h3>
-            <p>
-                Le transhumanisme offre des promesses sans précédent — mais à condition d'une gouvernance inclusive et
-                éthique. La question n'est pas <em>si</em> nous allons augmenter l'humain, mais <em>comment</em>,
-                <em>pour qui</em>, et <em>sous quelles règles</em>. La technologie doit servir les droits fondamentaux,
-                non les compromettre.
-            </p>
-        </div>
-
-        <!-- ══════════════════════ RÉSUMÉ FINAL ══════════════════════ -->
-        <div class="divider"></div>
-
-        <div class="section reveal">
-            <div class="section-num">Résumé</div>
-            <h2 class="section-title">Ce qu'il faut retenir</h2>
-        </div>
-
-        <div class="grid-2 reveal">
-            <div class="card" style="border-color:rgba(0,245,255,0.3)">
-                <div class="card-title">🔬 La Technologie</div>
-                <p>Les BCI comme Neuralink lisent et stimulent le cerveau via des fils microscopiques. La puce v0.9
-                    compte 3 072 électrodes, transmet en WiFi, et alimentera des IA de modélisation neurale. Premier
-                    patient humain implanté en 2024.</p>
-            </div>
-            <div class="card" style="border-color:rgba(123,47,255,0.3)">
-                <div class="card-title">💊 La Médecine</div>
-                <p>Applications immédiates validées : paralysie, Parkinson, épilepsie. Applications futures prometteuses
-                    : dépression, cancer précoce, rééducation cognitive. La frontière entre thérapeutique et enhancement
-                    reste floue.</p>
-            </div>
-            <div class="card" style="border-color:rgba(255,149,0,0.3)">
-                <div class="card-title">🚀 La Vision</div>
-                <p>Le transhumanisme veut transcender les limites biologiques humaines via la convergence NBIC. Ce
-                    mouvement s'inscrit dans une longue tradition philosophique (Condorcet, Rousseau) désormais
-                    concrétisée par la technologie.</p>
-            </div>
-            <div class="card" style="border-color:rgba(255,60,95,0.3)">
-                <div class="card-title">⚖️ L'Éthique</div>
-                <p>Les enjeux sont majeurs : inégalités, vie privée, dignité, surveillance. Une gouvernance inclusive et
-                    des droits de l'homme robustes sont indispensables pour que ces technologies servent le bien commun,
-                    pas l'élite.</p>
-            </div>
-        </div>
-
-        <footer>
-            Infographie réalisée à partir de : Shaima et al. (2024), JCSTS · Guigma & Godo (2024), Djiboul · Recherches
-            sur les implants et interfaces BCI
-            <br><br>
-            <span
-                style="color:var(--electric); font-family:'Orbitron',monospace; font-size:0.6rem; letter-spacing:0.2em;">L'AVENIR
-                EST DÉJÀ LÀ — IL N'EST PAS ENCORE DISTRIBUÉ ÉQUITABLEMENT</span>
-        </footer>
 
     </div>
 
     <script>
-        // Intersection Observer for reveal animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    // Animate progress bars
-                    entry.target.querySelectorAll('.prog-fill').forEach(bar => {
-                        setTimeout(() => bar.classList.add('animated'), 200);
-                    });
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach((e, i) => {
+                if (e.isIntersecting) {
+                    setTimeout(() => {
+                        e.target.classList.add('visible');
+                        e.target.querySelectorAll('.risk-fill').forEach(b => {
+                            setTimeout(() => b.classList.add('animated'), 350);
+                        });
+                    }, i * 90);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.08 });
 
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-        // Animate any visible bars on load
-        document.querySelectorAll('.prog-fill').forEach(bar => {
-            if (bar.closest('.reveal')) return;
-            bar.classList.add('animated');
-        });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
     </script>
 </body>
 
