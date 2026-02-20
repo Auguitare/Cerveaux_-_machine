@@ -4,14 +4,9 @@
 
 ---
 
-## Structure du projet
+## Utilisation
 
-```
-veille-bci/
-├── index.html          # Infographie principale
-├── detail.html         # Fiche investisseur
-└── README.md
-```
+Aucune dépendance, aucune installation. Ouvrir directement dans un navigateur : [https://auguitare.github.io/Cerveaux_et_machine/](https://auguitare.github.io/Cerveaux_et_machine/)
 
 ---
 
@@ -26,14 +21,19 @@ veille-bci/
 
 ---
 
-## Utilisation
-
-Aucune dépendance, aucune installation. Ouvrir directement dans un navigateur : [https://auguitare.github.io/Cerveaux_et_machine/](https://auguitare.github.io/Cerveaux_et_machine/)
-
----
-
 ## Contexte pédagogique
 
 Ce projet s'inscrit dans un exercice de **médiation scientifique** pour un public d'investisseurs. L'objectif n'est pas de vendre la technologie, mais d'alerter sur son évolution et les opportunités d'investissement qu'elle peut générer.
 
 Ce projet s'incrit dans le cursus de l'ISEN
+
+---
+
+## Structure du projet
+
+```
+veille-bci/
+├── index.html          # Infographie principale
+├── detail.html         # Fiche investisseur
+└── README.md
+```
